@@ -1,5 +1,33 @@
 const addTaskBtn = document.getElementById("add-task-btn");
 const startTimerBtn = document.getElementById("start-timer-btn");
+const resetTimerBtn = document.getElementById("reset-timer-btn");
+
+startTimerBtn.addEventListener("click", () => {
+  chrome.storage.local.get(["isRunning"], (res) => {
+    chrome.storage.local.set(
+      {
+        isRunning: !res.isRunning,
+      },
+      () => {
+        startTimerBtn.textContent = !res.isRunning
+          ? "Pause Timer"
+          : "Start Timer";
+      }
+    );
+  });
+});
+
+resetTimerBtn.addEventListener("click", () => {
+  chrome.storage.local.set(
+    {
+      isRunning: false,
+      timer: 0,
+    },
+    () => {
+      startTimerBtn.textContent = "Start Timer";
+    }
+  );
+});
 
 let tasks = [];
 
