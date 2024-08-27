@@ -1,9 +1,20 @@
 const addTaskBtn = document.getElementById("add-task-btn");
 const startTimerBtn = document.getElementById("start-timer-btn");
 
-const tasks = [];
+let tasks = [];
 
 addTaskBtn.addEventListener("click", () => addTask());
+
+chrome.storage.sync.get(["tasks"], (res) => {
+  tasks = res.tasks ? res.tasks : [];
+  renderTasks();
+});
+
+function saveTask() {
+  chrome.storage.sync.set({
+    tasks,
+  });
+}
 
 function renderTask(taskNum) {
   const taskRow = document.createElement("div");
@@ -14,6 +25,7 @@ function renderTask(taskNum) {
   text.value = tasks[taskNum];
   text.addEventListener("change", () => {
     tasks[taskNum] = text.value;
+    saveTask();
   });
 
   const deleteBtn = document.createElement("input");
@@ -35,11 +47,13 @@ function addTask() {
   tasks.push("");
 
   renderTask(taskNum);
+  saveTask();
 }
 
 function deleteTask(taskNum) {
   tasks.splice(taskNum, 1);
   renderTasks();
+  saveTask();
 }
 
 function renderTasks() {
