@@ -3,14 +3,20 @@ const startTimerBtn = document.getElementById("start-timer-btn");
 const resetTimerBtn = document.getElementById("reset-timer-btn");
 
 function updateTime() {
-  chrome.storage.local.get(["timer"], (res) => {
+  chrome.storage.local.get(["timer", "timeOption", "isRunning"], (res) => {
     const time = document.getElementById("time");
-    const minutes = `${25 - Math.ceil(res.timer / 60)}`.padStart(2, "0");
+    const minutes = `${res.timeOption - Math.ceil(res.timer / 60)}`.padStart(
+      2,
+      "0"
+    );
     let seconds = "00";
     if (res.timer % 60 != 0) {
       seconds = `${60 - (res.timer % 60)}`.padStart(2, "0");
     }
     time.textContent = `${minutes}:${seconds}`;
+    if (res.isRunning === false) {
+      startTimerBtn.textContent = "Start Timer";
+    }
   });
 }
 
